@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import pg from "pg";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 
 const app = express();
 const port = 3000;
