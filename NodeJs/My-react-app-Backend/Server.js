@@ -57,7 +57,7 @@ const authenticationToken = (req, res, next) => {
   }
 };
 
-app.get("/get/data", authenticationToken, async (req, res) => {
+app.get("/get/data", async (req, res) => {
   //console.log("Working");
   try {
     const result = await db.query("SELECT * FROM product");
@@ -70,7 +70,7 @@ app.get("/get/data", authenticationToken, async (req, res) => {
   }
 });
 
-app.post("/save/data", authenticationToken, async (req, res) => {
+app.post("/save/data", async (req, res) => {
   //console.log("Working");
   const data = req.body;
   //console.log(req.body);
@@ -88,7 +88,7 @@ app.post("/save/data", authenticationToken, async (req, res) => {
       ]
     );
 
-    console.log(result);
+    //console.log(result);
     console.log("Data inserted successfully");
     res.status(200).json({ message: "Data received successfully" });
   } catch (error) {
