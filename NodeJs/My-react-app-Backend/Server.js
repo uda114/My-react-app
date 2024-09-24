@@ -126,6 +126,23 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.delete("/delete/:id", async (req, res) => {
+  let id = req.params.id;
+  console.log("working", id);
+  try {
+    let result = await db.query("DELETE FROM product WHERE productId = $1", [
+      id,
+    ]);
+    //console.log(result);
+
+    console.log("Data deleted successfully");
+    res.send({ message: "Data deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting data:", error);
+    res.status(500).json({ error: "An error occurred while deleting data" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AddProduct = () => {
   let [product, setProduct] = useState({
@@ -10,6 +11,9 @@ const AddProduct = () => {
     quantity: "",
     image: "",
   });
+
+  let [message, setMessage] = useState("");
+  let navigate = useNavigate();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     //console.log(e.target.value);
@@ -22,6 +26,16 @@ const AddProduct = () => {
     try {
       let result = await axios.post("http://localhost:3000/save/data", product);
       console.log(result.data);
+      setProduct({
+        productId: "",
+        productName: "",
+        price: "",
+        productDescription: "",
+        quantity: "",
+        image: "",
+      });
+      setMessage(result.data.message);
+      navigate("/viewProduct");
     } catch (error) {
       console.log(error);
     }
@@ -29,6 +43,9 @@ const AddProduct = () => {
   return (
     <div>
       <form onSubmit={handleSubmit} method="post">
+        <h2>Add Product</h2>
+        <h3 style={{ color: "red" }}>{message}</h3>
+        <br />
         productId:{" "}
         <input
           type="text"
