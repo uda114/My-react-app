@@ -3,42 +3,30 @@ import AddProduct from "./CRUDOperation/AddProduct";
 import ViewProduct from "./CRUDOperation/ViewProduct";
 import NavBar from "./NavBar";
 import Cart from "./CRUDOperation/Cart";
-import ProtecterRoute from "./CRUDOperation/ProtecterRoute";
-import Login from "./CRUDOperation/Login";
+//import ProtecterRoute from "./CRUDOperation/ProtecterRoute";
+import Login from "./JWT/Login";
 
 function App() {
-  let isAdmin = true;
+  //let isAdmin = true;
 
   return (
     <div>
       <BrowserRouter>
         <NavBar />
         <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtecterRoute isAdmin={isAdmin}>
-                <AddProduct />
-              </ProtecterRoute>
-            }
-          >
+          <Route path="/" element={<AddProduct />}>
             {" "}
           </Route>
-          <Route
-            path="/addNewProduct"
-            element={
-              <ProtecterRoute isAdmin={isAdmin}>
-                <AddProduct />
-              </ProtecterRoute>
-            }
-          ></Route>
+          <Route path="/addNewProduct" element={<AddProduct />}></Route>
           <Route path="/products" element={<ViewProduct />}></Route>
           <Route
             path="/cart"
             element={
-              <ProtecterRoute isAdmin={isAdmin}>
+              /* <ProtecterRoute isAdmin={isAdmin}>
                 <Cart />
-              </ProtecterRoute>
+              </ProtecterRoute> 
+              if we use protective ruoting it will give a some level of security for the application*/
+              <Cart />
             }
           ></Route>
           <Route path="/login" element={<Login />}></Route>
