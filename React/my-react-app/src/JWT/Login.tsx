@@ -1,6 +1,8 @@
 import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import axiosIntance from "./axiosIntance";
+import { useNavigate } from "react-router-dom";
 
 interface FormValues {
   username: string;
@@ -14,13 +16,15 @@ const Login = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
+  let navigate = useNavigate();
   let onSave = async (data: FormValues) => {
     console.log(data);
     try {
-      let result = await axios.post("http://localhost:3000/login", data);
+      let result = await axiosIntance.post("/login", data);
       localStorage.setItem("token", result.data.token);
-      sessionStorage.setItem("token", result.data.token);
+      //sessionStorage.setItem("token", result.data.token);
       console.log(result.data);
+      navigate("/products");
     } catch (error) {
       console.log(error);
     }

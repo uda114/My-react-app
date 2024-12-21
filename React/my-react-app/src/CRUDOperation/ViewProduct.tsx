@@ -1,6 +1,13 @@
 import axios from "axios";
-import React, { HtmlHTMLAttributes, useEffect, useState } from "react";
+import React, {
+  HtmlHTMLAttributes,
+  startTransition,
+  useEffect,
+  useState,
+} from "react";
 import "./View.css";
+import axiosIntance from "../JWT/axiosIntance";
+import { useNavigate } from "react-router-dom";
 
 type Product = {
   productid: number;
@@ -16,13 +23,15 @@ const ViewProduct = () => {
   let [vproduct, setVProduct] = useState<Product[]>([]);
   //we can use this way also and can remove the product decl in map method
 
+  const navigate = useNavigate();
   let [loading, setLoading] = useState(true);
   let [error, setError] = useState("");
 
   useEffect(() => {
     const getProduct = async () => {
       try {
-        let result = await axios.get("http://localhost:3000/get/data");
+        //let result = await axios.get("http://localhost:3000/get/data");
+        let result = await axiosIntance.get("/get/data");
         //console.log(result.data);
         setVProduct(result.data);
         //console.log(vproduct);
@@ -35,17 +44,21 @@ const ViewProduct = () => {
     };
 
     getProduct();
-  }, [vproduct]);
+  }, []);
 
   function handleUpdate(id: number) {
     console.log(id);
+    startTransition(() => {
+      navigate(`/EditNewProduct/${id}`);
+    });
   }
 
   async function handleDelete(id: number) {
     //console.log(id);
 
     try {
-      let result = await axios.delete(`http://localhost:3000/delete/${id}`);
+      //let result = await axios.delete(`http://localhost:3000/delete/${id}`);
+      let result = await axiosIntance.delete(`/delete/${id}`);
       console.log(result.data);
       if (result.data.message === "Data deleted successfully") {
         setVProduct((prevProducts) =>

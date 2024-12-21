@@ -1,10 +1,12 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axiosIntance from "../JWT/axiosIntance";
+import { get } from "react-hook-form";
 
 const AddProduct = () => {
   let [product, setProduct] = useState({
-    productId: "",
+    productid: "",
     productName: "",
     price: "",
     productDescription: "",
@@ -12,8 +14,11 @@ const AddProduct = () => {
     image: "",
   });
 
+  let { id } = useParams();
   let [message, setMessage] = useState("");
   let navigate = useNavigate();
+
+  //console.log(id);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     //console.log(e.target.value);
@@ -24,10 +29,11 @@ const AddProduct = () => {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
-      let result = await axios.post("http://localhost:3000/save/data", product);
+      //let result = await axios.post("http://localhost:3000/save/data", product);
+      let result = await axiosIntance.post("/save/data", product);
       console.log(result.data);
       setProduct({
-        productId: "",
+        productid: "",
         productName: "",
         price: "",
         productDescription: "",
@@ -35,24 +41,50 @@ const AddProduct = () => {
         image: "",
       });
       setMessage(result.data.message);
-      navigate("/viewProduct");
+      navigate("/products");
     } catch (error) {
+      setMessage("Error connecting to the server");
       console.log(error);
     }
   }
+
+  useEffect(() => {
+    const getProduct = async () => {
+      let result = await axiosIntance.get(`/get/data/${id}`);
+      console.log();
+      setProduct({
+        productid: result.data[0].productid,
+        productName: result.data[0].productname,
+        price: result.data[0].price,
+        productDescription: result.data[0].productdescription,
+        quantity: result.data[0].quantity,
+        image: result.data[0].image,
+      });
+    };
+
+    if (id) {
+      getProduct();
+    }
+  }, [id]);
+
   return (
     <div>
       <form onSubmit={handleSubmit} method="post">
         <h2>Add Product</h2>
         <h3 style={{ color: "red" }}>{message}</h3>
         <br />
-        productId:{" "}
-        <input
-          type="text"
-          placeholder="productId"
-          name="productId"
-          onChange={handleChange}
-        />
+        {id ? null : (
+          <span>
+            productId:{" "}
+            <input
+              type="text"
+              placeholder="productId"
+              name="productid"
+              onChange={handleChange}
+              value={product.productid}
+            />
+          </span>
+        )}
         <br />
         productName:{" "}
         <input
@@ -60,6 +92,7 @@ const AddProduct = () => {
           placeholder="Product Name"
           name="productName"
           onChange={handleChange}
+          value={product.productName}
         />
         <br />
         price:{" "}
@@ -68,6 +101,7 @@ const AddProduct = () => {
           placeholder="Product Price"
           name="price"
           onChange={handleChange}
+          value={product.price}
         />
         <br />
         productDescription :{" "}
@@ -76,6 +110,7 @@ const AddProduct = () => {
           placeholder="Product Description"
           name="productDescription"
           onChange={handleChange}
+          value={product.productDescription}
         />
         <br />
         quantity:{" "}
@@ -84,6 +119,7 @@ const AddProduct = () => {
           placeholder="Product Quantity"
           name="quantity"
           onChange={handleChange}
+          value={product.quantity}
         />
         <br />
         image:{" "}
@@ -96,7 +132,9 @@ const AddProduct = () => {
         />
         <br />
         <br />
-        <button /* onClick={handleSubmit} */>Add Product</button>
+        <button /* onClick={handleSubmit} */>
+          {id ? <span>Update</span> : <span>Add Product</span>}
+        </button>
       </form>
     </div>
   );

@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import pg from "pg";
 import jwt from "jsonwebtoken";
-import axios from "axios";
 
 const app = express();
 const port = 3000;
@@ -57,7 +56,7 @@ const authenticationToken = (req, res, next) => {
   }
 };
 
-app.get("/get/data", async (req, res) => {
+app.get("/get/data", authenticationToken, async (req, res) => {
   //console.log("Working");
   try {
     const result = await db.query("SELECT * FROM product");
@@ -70,16 +69,36 @@ app.get("/get/data", async (req, res) => {
   }
 });
 
-app.post("/save/data", async (req, res) => {
+app.get("/get/data/:id", authenticationToken, async (req, res) => {
+  console.log("working");
+
+  let pid = req.params.id;
+  console.log(pid);
+
+  try {
+    const result = await db.query(
+      "SELECT * FROM product WHERE productid = $1",
+      [pid]
+    );
+    //console.log(result.rows);
+    res.send(result.rows);
+    console.log("Data sent successfully");
+  } catch (error) {
+    console.error("Error Retriving data:", error);
+    res.status(500).json({ error: "An error occurred while Retriving data" });
+  }
+});
+
+app.post("/save/data", authenticationToken, async (req, res) => {
   //console.log("Working");
   const data = req.body;
-  //console.log(req.body);
+  console.log(req.body);
   prodcut.push(data);
   try {
     const result = await db.query(
       "INSERT INTO product (productId, productName, price, productDescription, quantity,image) VALUES ($1, $2, $3, $4, $5, $6)",
       [
-        data.productId,
+        data.productid,
         data.productName,
         data.price,
         data.productDescription,
@@ -126,7 +145,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.delete("/delete/:id", async (req, res) => {
+app.delete("/delete/:id", authenticationToken, async (req, res) => {
   let id = req.params.id;
   console.log("working", id);
   try {
